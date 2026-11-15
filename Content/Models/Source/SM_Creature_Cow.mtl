@@ -1,0 +1,20 @@
+newmtl Eyes
+Kd 0.7 0.7 0.7
+Ka 0.1 0.1 0.1
+Ks 0.04 0.04 0.04
+Ns 16
+newmtl Hide
+Kd 0.7 0.7 0.7
+Ka 0.1 0.1 0.1
+Ks 0.04 0.04 0.04
+Ns 16
+newmtl Hooves
+Kd 0.7 0.7 0.7
+Ka 0.1 0.1 0.1
+Ks 0.04 0.04 0.04
+Ns 16
+newmtl Patches
+Kd 0.7 0.7 0.7
+Ka 0.1 0.1 0.1
+Ks 0.04 0.04 0.04
+Ns 16

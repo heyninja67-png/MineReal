@@ -1,0 +1,44 @@
+name: Unreal Android ARM64 build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  android-package:
+    # Requires a self-hosted machine with a licensed UE 5.8 install and Android SDK/NDK.
+    # Configure the repository Actions variable UE_ROOT to that engine installation root.
+    runs-on: [self-hosted, Windows, X64, ue-5-8, android]
+    timeout-minutes: 180
+    env:
+      UE_ROOT: ${{ vars.UE_ROOT }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Check project structure
+        shell: pwsh
+        run: python Scripts/validate_project.py
+
+      - name: Verify Unreal installation
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:UE_ROOT)) { throw "Set Actions variable UE_ROOT to the UE 5.8 install root." }
+          if (!(Test-Path (Join-Path $env:UE_ROOT 'Engine\Build\BatchFiles\RunUAT.bat'))) { throw "RunUAT.bat not found under UE_ROOT." }
+
+      - name: Build and package Android ARM64
+        shell: pwsh
+        run: ./Build/BuildAndroid.ps1
+
+      - name: Upload APK output
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinecraftBedrockRealistic-Android-ARM64
+          path: Build/AndroidPackage/**
+          if-no-files-found: error
+          retention-days: 14
