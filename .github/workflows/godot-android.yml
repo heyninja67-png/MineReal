@@ -79,6 +79,24 @@ jobs:
           godot --headless --path . --export-debug "Android" build/MineReal.apk
           test -s build/MineReal.apk
 
+      - name: Sign APK for Android installation
+        run: |
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/minereal-debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -keyalg RSA -keysize 2048 -validity 10000
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" sign \
+            --ks "$RUNNER_TEMP/minereal-debug.keystore" \
+            --ks-pass pass:android \
+            --key-pass pass:android \
+            --ks-key-alias androiddebugkey \
+            --out build/MineReal-signed.apk build/MineReal.apk
+          mv build/MineReal-signed.apk build/MineReal.apk
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose --print-certs build/MineReal.apk
+
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
